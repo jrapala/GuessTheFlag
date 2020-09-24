@@ -30,7 +30,8 @@ struct ContentView: View {
                     Button(action: {
                         self.flagTapped(number)
                     }) {
-                        Image(self.countries[number]).renderingMode(.original)
+                        Image(self.countries[number])
+                            .renderingMode(.original)
                     }
                 }
                 
@@ -51,6 +52,7 @@ struct ContentView: View {
         } else {
             scoreTitle = "Wrong"
         }
+        showingScore = true
     }
     
     func askQuestion() {
