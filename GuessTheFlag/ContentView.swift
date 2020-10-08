@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var userGuess = ""
     @State private var spinAnimationAmount = 0.0
     @State private var opacityAnimationAmount = 1.0
+    @State private var shakeAnimationAmount: CGFloat = 0
     
     var body: some View {
         ZStack {
@@ -39,6 +40,7 @@ struct ContentView: View {
                         FlagImage(imageName: self.countries[number])
                             .rotation3DEffect(.degrees(number == correctAnswer ? spinAnimationAmount : 0), axis: (x: 0, y: 1, z: 0))
                             .opacity(number == correctAnswer ? 1 : opacityAnimationAmount)
+                            .modifier(Shake(animatableData: CGFloat(number != correctAnswer && userGuess == countries[number] ? shakeAnimationAmount : 0)))
                     }
                 }
                 
@@ -47,7 +49,7 @@ struct ContentView: View {
                         .foregroundColor(.white)
                     Text("\(score)")
                         .foregroundColor(.white)
-                        .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        .font(.title)
                         .offset(y: 10)
                 }
                 Spacer()
@@ -72,6 +74,9 @@ struct ContentView: View {
             }
         } else {
             scoreTitle = "Wrong"
+            withAnimation{
+                self.shakeAnimationAmount += 1
+            }
         }
         showingScore = true
     }
@@ -92,6 +97,18 @@ struct FlagImage: View {
             .clipShape(Capsule())
             .overlay(Capsule().stroke(Color.black, lineWidth: 1))
             .shadow(color: .black, radius: 2)
+    }
+}
+
+struct Shake: GeometryEffect {
+    var amount: CGFloat = 10
+    var shakesPerUnit = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        ProjectionTransform(CGAffineTransform(translationX:
+            amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)),
+            y: 0))
     }
 }
 
